@@ -31,6 +31,20 @@ def latex_to_python(expr):
     expr = expr.replace(' ', '')
     return expr
 
+def replace_greek_symbols(result_str):
+    # Map variable names to Unicode symbols
+    greek_unicode = {
+        'omega': 'ω',
+        'pi': 'π',
+        'alpha': 'α',
+        'beta': 'β',
+        'theta': 'θ',
+    }
+    for name, symbol in greek_unicode.items():
+        # Only replace as a whole word
+        result_str = re.sub(rf'\b{name}\b', symbol, result_str)
+    return result_str
+
 def main():
     print("LaTeX Terminal Calculator (with integrals and Greek symbols)")
     print("Enter a LaTeX math expression (e.g., \\frac{1}{2} + 3, \\int_{0}^{1} x^2 dx, \\omega + 2):")
@@ -44,7 +58,9 @@ def main():
             py_expr = latex_to_python(latex_input)
             # Evaluate the expression safely
             result = eval(py_expr, {"__builtins__": None, "math": math, "integrate": integrate, "sympify": sympify, "omega": omega, "alpha": alpha, "beta": beta, "theta": theta, "x": x, "y": y, "z": z, "pi": pi})
-            print(f"= {result}")
+            result_str = str(result)
+            result_str = replace_greek_symbols(result_str)
+            print(f"= {result_str}")
         except Exception as e:
             print(f"Error: {e}")
 
